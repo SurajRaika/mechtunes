@@ -1,0 +1,79 @@
+.logo.vite:hover {
+  filter: drop-shadow(0 0 2em #747bff);
+}
+
+.logo.preact:hover {
+  filter: drop-shadow(0 0 2em #673ab8);
+}
+
+#root{
+  padding: 1rem ;
+  min-width: 500px;
+}
+header{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.header-menu-right-side{
+  display: flex;
+  gap: 0.5rem;
+}
+
+#main-wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 16/9;
+  
+}
+#mackTunes-box{
+  aspect-ratio: 16/5;
+
+  border: 2px solid rgba(0, 0, 0, 0.200) ;
+  padding: 2rem 4rem;
+  box-shadow: 0px 6px 4px 0px #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#mackTunes-text{
+  font-size: 2rem;
+  font-weight: 700;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+
+.controller {
+  display: grid;
+  grid-template-columns: 50px auto 50px; /* Modified grid-template-columns */
+  grid-template-rows: repeat(2, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  justify-items: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.controller button{
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.13);
+  border: none;
+  width: 50px;
+  aspect-ratio: 3/2;
+  cursor: pointer;
+  
+}
+
+
+
+:root{
+  --mdc-theme-secondary:black;
+  --mdc-theme-primary:red;
+
+}
+
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
