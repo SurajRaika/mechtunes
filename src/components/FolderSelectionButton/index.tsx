@@ -7,12 +7,36 @@ import { invoke } from "@tauri-apps/api/tauri";
 // Open a selection dialog for directories
 
 const FolderSelectionButton = () => {
-
-  const [selected_file, set_file] = useState(null);
-  let name="/home/surajraika/Downloads/someSound/someosund";
-
   async function handleFolderSelect() {
-    set_file(await invoke("set_track",{name:name}))
+    console.log("add");
+
+    invoke("add_track").then((message: unknown) => {
+
+      if (typeof message == "string") {
+        interface ApiResponse {
+          success: Boolean,
+          data?: string | null,
+          error?: string | null
+        };
+
+        let responce: ApiResponse = JSON.parse(message);
+        if (responce.success) {
+
+        }
+      } else {
+        console.error("Unexpected message type:", typeof message);
+      }
+
+
+
+
+
+
+    }).catch((n) => {
+      console.log(n);
+    });
+
+
   }
 
   return (

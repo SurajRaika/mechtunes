@@ -1,13 +1,31 @@
 import { Button, Page, Text, Grid, Card } from '@geist-ui/core'
 import { Github, Power, ChevronLeft, ChevronRight, Volume1, Volume2 } from '@geist-ui/icons'
 import Slider from 'preact-material-components/Slider';
+import { invoke } from "@tauri-apps/api/tauri";
+
 import 'preact-material-components/Slider/style.css';
 import { useState } from "preact/hooks";
 
-import  FolderSelectionButton  from "./components/FolderSelectionButton";
+import FolderSelectionButton from "./components/FolderSelectionButton";
+import { as } from 'vitest/dist/reporters-5f784f42.js';
 
 
 export default function AppComponent() {
+
+    async function set_vol(volume: Number) {
+        console.log(`Volume${volume}`);
+
+        // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+        invoke("set_vol", { vol: `${volume}` }).then((message) => {
+            console.log(message)
+        }).catch((n) => {
+            console.log(n);
+        });
+    }
+
+
+
+
     return (
         <main>
 
@@ -41,16 +59,16 @@ export default function AppComponent() {
                     <Volume1></Volume1>
                 </button>
                 <div style="width:100%; "  >
-                    <Slider onInput={() => {
-                        console.log("dsa");
+                    <Slider onInput={(Number: any) => {
+                        set_vol(Number.target.getAttribute("aria-valuenow"));
                     }} step={2} value={10} max={100} />
                 </div>
                 <button>
                     <Volume2></Volume2>
                 </button>
             </div>
-         
-            <FolderSelectionButton>d</FolderSelectionButton>
+
+            <FolderSelectionButton></FolderSelectionButton>
         </main>
     );
 }

@@ -4,10 +4,12 @@ pub mod rustyvibes {
     use serde_json;
     use serde_json::{Map, Value};
     use std::error::Error;
-    use std::fs;
+    use std::{default, fs};
+    use tokio::sync::mpsc;
 
     pub use crate::keycode::key_code;
     pub use crate::play_sound::sound;
+    use crate::UserChangeAction;
 
     fn initialize_json(path: &str) -> Result<Map<String, Value>, Box<dyn Error>> {
         let config = fs::read_to_string(path)?;
@@ -18,12 +20,16 @@ pub mod rustyvibes {
 
     pub struct JSONFile {
         pub value: Option<serde_json::Map<std::string::String, serde_json::Value>>,
+        pub vol: Option<u16>,
     }
 
     impl JSONFile {
         pub fn initialize(&mut self, directory: String) {
             let soundpack_config = &format!("{}/config.json", directory)[..];
             self.value = Some(initialize_json(soundpack_config).unwrap());
+        }
+        pub fn initialize_vol(&mut self, vol: u16) {
+            self.vol = Some(vol);
         }
         pub fn event_handler(self: &Self, event: Event, directory: String, vol: u16) {
             match &self.value {
@@ -37,7 +43,7 @@ pub mod rustyvibes {
         }
     }
 
-    pub fn start_rustyvibes(args: String, vol: u16) {
+    pub async fn start_rustyvibes(mut input_rx: mpsc::Receiver<UserChangeAction>) {
         {
             #[cfg(any(target_os = "macos", target_os = "linux"))]
             unsafe {
@@ -53,15 +59,56 @@ pub mod rustyvibes {
                 assert!(set_current_thread_priority(ThreadPriority::Max).is_ok());
             }
         }
+        let mut default_args =
+            "/home/surajraika/Documents/mechtunes/src/SoundPack/super_paper_mario_v1".to_string();
+        let mut default_vol = 80;
 
-        let mut json_file = JSONFile { value: None };
-        json_file.initialize(args.clone());
+        let mut json_file = JSONFile {
+            value: None,
+            vol: None,
+        };
+        json_file.initialize(default_args.clone());
+        json_file.initialize_vol(default_vol.clone());
 
         println!("Soundpack configuration loaded");
         println!("Rustyvibes is running");
 
         let event_handler = move |event: Event| {
-            json_file.event_handler(event, args.clone(), vol);
+            // if let Result::Ok(re) = input_rx.try_recv() {
+            //     dbg!(re);
+            //     match re {
+            //         UserChangeAction::Vol(vol) => {
+            //             json_file.initialize_vol(vol.clone());
+            //             default_vol = vol;
+            //         }
+            //         UserChangeAction::Arguments(argg) => {
+            //             json_file.initialize(argg.clone());
+            //             default_args = argg;
+            //         }
+            //     };
+            // }
+
+            match input_rx.try_recv() {
+                Ok(re) => {
+                    match re {
+                        UserChangeAction::Vol(vol) => {
+                            json_file.initialize_vol(vol.clone());
+                            default_vol = vol;
+                            dbg!("vol changed");
+                        }
+                        UserChangeAction::Arguments(arg) => {
+                            json_file.initialize(arg.clone());
+                            default_args = arg;
+                            dbg!("arg changed");
+                        }
+                    };
+                }
+                Err(_err) => {
+                    // println!("Error:{:?}", err);
+                }
+            }
+
+            json_file.event_handler(event, default_args.clone(), default_vol.clone());
         };
 
         if let Err(error) = listen(event_handler) {
@@ -75,7 +122,12 @@ pub mod rustyvibes {
 
     static KEY_DEPRESSED: Lazy<Mutex<HashSet<i32>>> = Lazy::new(|| Mutex::new(HashSet::new()));
 
-    fn callback(event: Event, json_file: serde_json::Map<std::string::String, serde_json::Value>, directory: String, vol: u16) {
+    fn callback(
+        event: Event,
+        json_file: serde_json::Map<std::string::String, serde_json::Value>,
+        directory: String,
+        vol: u16,
+    ) {
         match event.event_type {
             rdev::EventType::KeyPress(key) => {
                 let key_code = key_code::code_from_key(key);
