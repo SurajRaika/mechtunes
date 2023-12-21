@@ -7,35 +7,40 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "mechtunes",
+    "productName": "MechType",
     "version": "0.0.0"
   },
   "tauri": {
     "allowlist": {
-      "all": false,
+    
       "dialog": {
         "open":true
-      },
-      "path": {
-        "all": true
       },
       "fs": {
         "readFile": true,
         "writeFile": true,
-        "exists": true
+        "readDir": true,
+        "scope": [
+          "$APPDATA/*","$APPDATA",
+          "$APPDATA/**",
+        "$RESOURCE/*",        "$RESOURCE/**","$RESOURCE"]
       }
     },
     "bundle": {
       "active": true,
-      "targets": "all",
-      "identifier": "com.tauri.dev",
+      "targets": ["appimage"],
+      "identifier": "MechTypes",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
+      ],
+      "resources":[
+        "soundPack/super_paper_mario_v1/"
       ]
+
     },
     "security": {
       "csp": null
@@ -43,9 +48,9 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
-        "title": "mechtunes",
-        "width": 800,
+        "resizable": false,
+        "title": "MechType",
+        "width": 600,
         "height": 600
       }
     ]

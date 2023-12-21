@@ -1,0 +1,13 @@
+::selection {
+  background-color:rgba(0, 0, 0, 0.233);
+}
+
+::-moz-selection {
+  background-color:rgba(0, 0, 0, 0.233);
+
+}
+
+::-webkit-selection {
+  background-color:rgba(0, 0, 0, 0.233);
+
+}

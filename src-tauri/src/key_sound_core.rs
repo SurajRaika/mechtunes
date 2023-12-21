@@ -4,7 +4,7 @@ pub mod rustyvibes {
     use serde_json;
     use serde_json::{Map, Value};
     use std::error::Error;
-    use std::{default, fs};
+    use std::fs;
     use tokio::sync::mpsc;
 
     pub use crate::keycode::key_code;
@@ -43,7 +43,7 @@ pub mod rustyvibes {
         }
     }
 
-    pub async fn start_rustyvibes(mut input_rx: mpsc::Receiver<UserChangeAction>) {
+    pub async fn start_rustyvibes(mut input_rx: mpsc::Receiver<UserChangeAction>,resource_path:String) {
         {
             #[cfg(any(target_os = "macos", target_os = "linux"))]
             unsafe {
@@ -59,8 +59,7 @@ pub mod rustyvibes {
                 assert!(set_current_thread_priority(ThreadPriority::Max).is_ok());
             }
         }
-        let mut default_args =
-            "/home/surajraika/Documents/mechtunes/src/SoundPack/super_paper_mario_v1".to_string();
+        let mut default_args =resource_path.clone();
         let mut default_vol = 80;
 
         let mut json_file = JSONFile {
