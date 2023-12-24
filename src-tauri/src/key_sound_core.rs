@@ -43,7 +43,10 @@ pub mod rustyvibes {
         }
     }
 
-    pub async fn start_rustyvibes(mut input_rx: mpsc::Receiver<UserChangeAction>,resource_path:String) {
+    pub async fn start_rustyvibes(
+        mut input_rx: mpsc::Receiver<UserChangeAction>,
+        resource_path: String,
+    ) {
         {
             #[cfg(any(target_os = "macos", target_os = "linux"))]
             unsafe {
@@ -59,7 +62,7 @@ pub mod rustyvibes {
                 assert!(set_current_thread_priority(ThreadPriority::Max).is_ok());
             }
         }
-        let mut default_args =resource_path.clone();
+        let mut default_args = resource_path.clone();
         let mut default_vol = 80;
 
         let mut json_file = JSONFile {
@@ -73,20 +76,6 @@ pub mod rustyvibes {
         println!("Rustyvibes is running");
 
         let event_handler = move |event: Event| {
-            // if let Result::Ok(re) = input_rx.try_recv() {
-            //     dbg!(re);
-            //     match re {
-            //         UserChangeAction::Vol(vol) => {
-            //             json_file.initialize_vol(vol.clone());
-            //             default_vol = vol;
-            //         }
-            //         UserChangeAction::Arguments(argg) => {
-            //             json_file.initialize(argg.clone());
-            //             default_args = argg;
-            //         }
-            //     };
-            // }
-
             match input_rx.try_recv() {
                 Ok(re) => {
                     match re {

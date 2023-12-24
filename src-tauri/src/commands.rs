@@ -1,15 +1,9 @@
-use serde::{Deserialize, Serialize};
-use tauri::api::dialog::FileDialogBuilder;
-use tauri::api::dir::{is_dir,read_dir};
-
+use crate::ApiResponse;
 pub use crate::AsyncProcInputTx;
 use crate::UserChangeAction;
-#[derive(Debug, Serialize, Deserialize)]
-struct ApiResponse {
-    success: bool,
-    data: Option<String>,
-    error: Option<String>,
-}
+use serde::{Deserialize, Serialize};
+use tauri::api::dialog::FileDialogBuilder;
+use tauri::api::dir::{is_dir, read_dir};
 
 #[tauri::command]
 pub async fn set_track(
@@ -87,9 +81,7 @@ fn check_path(file_path: String) -> ApiResponse {
     if is_dir(file_path.clone()).expect("Error in checking dir") {
         let mut has_config_file = false;
         let mut has_wav_music_file = false;
-        for file in read_dir(file_path.clone(), false)
-            .expect("Error_in_reading dir content")
-        {
+        for file in read_dir(file_path.clone(), false).expect("Error_in_reading dir content") {
             if file.name.clone().unwrap().contains("config.json") {
                 has_config_file = true;
             } else if file.name.clone().unwrap().contains(".wav") {

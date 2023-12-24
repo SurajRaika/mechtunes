@@ -46,15 +46,14 @@ export async function set_track(track_path: string) {
 
 export async function intialising_sound_track_data() {
     const files = await readDir('soundPack/', { dir: BaseDirectory.Resource });
-    console.log(files);
-
+    
     let json: Track_data[] = [];
     files.forEach(track => {
         let tr: Track_data = { name: track.name!, path: track.path! };
         json.push(tr);
     });
 
-    await writeTextFile('app_data.json', JSON.stringify(json), { dir: BaseDirectory.AppData });
+    return await writeTextFile('app_data.json', JSON.stringify(json), { dir: BaseDirectory.AppData });
 
 }
 

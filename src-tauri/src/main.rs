@@ -2,9 +2,11 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod commands;
+use serde::{Deserialize, Serialize};
 mod key_sound_core;
 mod keycode;
 mod play_sound;
+mod test;
 use tokio::sync::{
     mpsc::{self},
     Mutex,
@@ -17,9 +19,14 @@ use commands::{add_track, set_track};
 pub struct AsyncProcInputTx {
     inner: Mutex<mpsc::Sender<UserChangeAction>>,
 }
-
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ApiResponse {
+    success: bool,
+    data: Option<String>,
+    error: Option<String>,
+}
 #[derive(Debug)]
-enum UserChangeAction {
+pub enum UserChangeAction {
     Arguments(String),
     Vol(u16),
 }
@@ -34,12 +41,17 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![set_track, add_track, set_vol])
         .setup(|app| {
-            let resource_path = app.path_resolver()
-            .resolve_resource("soundPack/super_paper_mario_v1/")
-            .expect("failed to resolve resource");
+            let resource_path = app
+                .path_resolver()
+                .resolve_resource("soundPack/super_paper_mario_v1/")
+                .expect("failed to resolve resource");
 
             (tauri::async_runtime::spawn(async move {
-                key_sound_core::rustyvibes::start_rustyvibes(async_proc_input_rx,String::from(resource_path.to_string_lossy())).await
+                key_sound_core::rustyvibes::start_rustyvibes(
+                    async_proc_input_rx,
+                    String::from(resource_path.to_string_lossy()),
+                )
+                .await
             }));
             Ok(())
         })
