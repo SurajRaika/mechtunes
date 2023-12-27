@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 mod key_sound_core;
 mod keycode;
 mod play_sound;
-mod test;
+// mod test;
 use tokio::sync::{
     mpsc::{self},
     Mutex,
