@@ -61,7 +61,7 @@ jobs:
           sudo apt install -y --no-install-recommends libasound2-dev pkg-config
 
       - name: Build Frontend
-        run: yarn && yarn generate
+        run: yarn && yarn build
 
       - uses: JonasKruckenberg/tauri-build@v1.4.0
         id: tauri_build
