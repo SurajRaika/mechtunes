@@ -40,7 +40,6 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
-
       - name: Build Frontend
         run: yarn && yarn build
 
